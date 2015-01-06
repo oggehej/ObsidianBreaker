@@ -1,4 +1,11 @@
 # Configuration file
-BlockHits: 2
-LiquidMultiplier: 2
 BlastRadius: 2
+LiquidMultiplier: 2
+DurabilityChecker: 280
+Blocks:
+  49: 2
+  116: 2
+  130: 2
+Regen:
+  Frequency: 10
+  Amount: 1
