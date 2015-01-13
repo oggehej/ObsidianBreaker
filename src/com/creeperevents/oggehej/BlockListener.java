@@ -1,5 +1,7 @@
 package com.creeperevents.oggehej;
 
+import java.util.Random;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -46,8 +48,12 @@ public class BlockListener implements Listener
 		if(plugin.getConfig().getConfigurationSection("Blocks").contains(Integer.toString(block.getTypeId())))
 			try
 			{
-				if(plugin.storage.addDamage(block, source.getBlock().isLiquid() ? 1 / plugin.getConfig().getDouble("LiquidMultiplier") : 1D))
-					block.setType(Material.AIR);
+				double liquidMultiplier = plugin.getConfig().getDouble("LiquidMultiplier");
+				if(plugin.storage.addDamage(block, source.getBlock().isLiquid() && !(liquidMultiplier < 0) ? 1 / liquidMultiplier : 1D))
+					if(new Random().nextInt(100) + 1 >= plugin.getConfig().getInt("DropChance"))
+						block.setType(Material.AIR);
+					else
+						block.breakNaturally();
 			} catch (UnknownBlockTypeException e) {}
 	}
 }

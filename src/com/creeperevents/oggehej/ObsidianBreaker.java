@@ -1,30 +1,37 @@
 package com.creeperevents.oggehej;
 
+import java.io.IOException;
 import java.util.Map.Entry;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.mcstats.MetricsLite;
 
 public class ObsidianBreaker extends JavaPlugin
 {
 	private BlockListener blockListener;
 	private PlayerListener playerListener;
 	StorageHandler storage;
-	
+
 	public void onEnable()
 	{
 		blockListener = new BlockListener(this);
 		playerListener = new PlayerListener(this);
 		storage = new StorageHandler(this);
-		
+
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(blockListener, this);
 		pm.registerEvents(playerListener, this);
-		
+
 		getConfig().options().copyDefaults(true);
-		saveConfig();		
-		
+		saveConfig();
+
+		try {
+			MetricsLite metrics = new MetricsLite(this);
+			metrics.start();
+		} catch (IOException e) {}
+
 		long freq = (long) (getConfig().getDouble("Regen.Frequency") * 20 * 60);
 		new BukkitRunnable()
 		{

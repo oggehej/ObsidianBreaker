@@ -1,7 +1,11 @@
-# Configuration file
+# Configuration file for ObsidianDestroyer
+# Set LiquidMultiplier or Regen.Frequency to -1 if you want to disable those features
+# DropChance is measured in percent. Default in Minecraft is 30 %.
+
 BlastRadius: 2
 LiquidMultiplier: 2
 DurabilityChecker: 280
+DropChance: 0
 Blocks:
   49: 2
   116: 2

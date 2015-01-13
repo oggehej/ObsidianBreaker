@@ -3,3 +3,7 @@ main: com.creeperevents.oggehej.ObsidianBreaker
 version: 1.1
 description: Destroy obsidian like a baws
 author: oggehej
+permissions:
+  obsidianbreaker.test:
+    description: Allow user to test the durability of a block
+    default: true
