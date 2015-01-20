@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerListener implements Listener
 {
-	ObsidianBreaker plugin;
+	private ObsidianBreaker plugin;
 	PlayerListener(ObsidianBreaker instance)
 	{
 		this.plugin = instance;
@@ -27,8 +27,8 @@ public class PlayerListener implements Listener
 				if(player.hasPermission("obsidianbreaker.test"))
 					try {
 						Block block = event.getClickedBlock();
-						String durability = ObsidianMath.smartRound(plugin.storage.getTotalDurability(block));
-						String durabilityLeft = ObsidianMath.smartRound(plugin.storage.getRemainingDurability(block));
+						String durability = ObsidianMath.smartRound(plugin.getStorage().getTotalDurability(block));
+						String durabilityLeft = ObsidianMath.smartRound(plugin.getStorage().getRemainingDurability(block));
 						player.sendMessage(ChatColor.GOLD + "Durability: " + durabilityLeft + " of " + durability);
 					} catch (UnknownBlockTypeException e) {}
 		}

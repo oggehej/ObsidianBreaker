@@ -12,7 +12,7 @@ public class ObsidianBreaker extends JavaPlugin
 {
 	private BlockListener blockListener;
 	private PlayerListener playerListener;
-	StorageHandler storage;
+	private StorageHandler storage;
 
 	public void onEnable()
 	{
@@ -20,18 +20,23 @@ public class ObsidianBreaker extends JavaPlugin
 		playerListener = new PlayerListener(this);
 		storage = new StorageHandler(this);
 
+		// Register events
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(blockListener, this);
 		pm.registerEvents(playerListener, this);
 
+		// Load configuration file
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 
+		// Initialise metrics
 		try {
 			MetricsLite metrics = new MetricsLite(this);
 			metrics.start();
 		} catch (IOException e) {}
 
+		// Initialise block regeneration
+		// Configuration can be set to a negative frequency in order to disable
 		long freq = (long) (getConfig().getDouble("Regen.Frequency") * 20 * 60);
 		new BukkitRunnable()
 		{
@@ -51,5 +56,15 @@ public class ObsidianBreaker extends JavaPlugin
 				}
 			}
 		}.runTaskTimerAsynchronously(this, freq, freq);
+	}
+	
+	/**
+	 * Get the storage handler of ObsidianBreaker
+	 * 
+	 * @return Storage handler
+	 */
+	public StorageHandler getStorage()
+	{
+		return storage;
 	}
 }
