@@ -72,7 +72,7 @@ public class StorageHandler
 	 * 
 	 * @param block Block
 	 * @param addDamage Damage to add
-	 * @return Return true if the durability is <= 0
+	 * @return Return true if the durability left is <= 0
 	 * @throws UnknownBlockTypeException There's no durability data for this block type
 	 */
 	public boolean addDamage(Block block, double addDamage) throws UnknownBlockTypeException

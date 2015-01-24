@@ -58,6 +58,7 @@ public class BlockListener implements Listener
 	 * 
 	 * @param loc Location of the block
 	 * @param source Location of the explosion source
+	 * @param explisive The EntityType of the explosion cause
 	 */
 	@SuppressWarnings("deprecation")
 	private void explodeBlock(Location loc, Location source, EntityType explosive)
