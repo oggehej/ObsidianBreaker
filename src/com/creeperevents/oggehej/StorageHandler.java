@@ -7,7 +7,7 @@ import org.bukkit.block.Block;
 
 public class StorageHandler
 {
-	ObsidianBreaker plugin;
+	private ObsidianBreaker plugin;
 	StorageHandler(ObsidianBreaker instance)
 	{
 		this.plugin = instance;
@@ -77,6 +77,9 @@ public class StorageHandler
 	 */
 	public boolean addDamage(Block block, double addDamage) throws UnknownBlockTypeException
 	{
+		if(addDamage <= 0 || getTotalDurability(block) < 0)
+			return false;
+		
 		String hash = generateHash(block.getLocation());
 		double totalDamage = damage.containsKey(hash) ? addDamage + (double) damage.get(hash).getDamage() : addDamage;
 

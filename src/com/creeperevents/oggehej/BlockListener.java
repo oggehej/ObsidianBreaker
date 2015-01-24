@@ -6,6 +6,7 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -41,7 +42,7 @@ public class BlockListener implements Listener
 				{
 					Location targetLoc = new Location(detonatorLoc.getWorld(), detonatorLoc.getX() + x, detonatorLoc.getY() + y, detonatorLoc.getZ() + z);
 					if (detonatorLoc.distance(targetLoc) <= unalteredRadius)
-						explodeBlock(targetLoc, detonatorLoc);
+						explodeBlock(targetLoc, detonatorLoc, event.getEntityType());
 				}
 	}
 
@@ -59,14 +60,15 @@ public class BlockListener implements Listener
 	 * @param source Location of the explosion source
 	 */
 	@SuppressWarnings("deprecation")
-	private void explodeBlock(Location loc, Location source)
+	private void explodeBlock(Location loc, Location source, EntityType explosive)
 	{
 		Block block = loc.getWorld().getBlockAt(loc);
 		if(plugin.getConfig().getConfigurationSection("Blocks").contains(Integer.toString(block.getTypeId())))
 			try
 			{
-				double liquidMultiplier = plugin.getConfig().getDouble("LiquidMultiplier");
-				if(plugin.getStorage().addDamage(block, source.getBlock().isLiquid() && !(liquidMultiplier < 0) ? 1 / liquidMultiplier : 1D))
+				double liquidDivider = plugin.getConfig().getDouble("LiquidMultiplier");
+				double rawDamage = plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());
+				if(plugin.getStorage().addDamage(block, source.getBlock().isLiquid() && !(liquidDivider <= 0) ? rawDamage / liquidDivider : rawDamage))
 					if(new Random().nextInt(100) + 1 >= plugin.getConfig().getInt("DropChance"))
 						block.setType(Material.AIR);
 					else

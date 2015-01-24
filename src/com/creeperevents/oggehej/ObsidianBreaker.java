@@ -57,7 +57,7 @@ public class ObsidianBreaker extends JavaPlugin
 			}
 		}.runTaskTimerAsynchronously(this, freq, freq);
 	}
-	
+
 	/**
 	 * Get the storage handler of ObsidianBreaker
 	 * 

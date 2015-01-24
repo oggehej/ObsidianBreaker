@@ -27,9 +27,14 @@ public class PlayerListener implements Listener
 				if(player.hasPermission("obsidianbreaker.test"))
 					try {
 						Block block = event.getClickedBlock();
-						String durability = ObsidianMath.smartRound(plugin.getStorage().getTotalDurability(block));
-						String durabilityLeft = ObsidianMath.smartRound(plugin.getStorage().getRemainingDurability(block));
-						player.sendMessage(ChatColor.GOLD + "Durability: " + durabilityLeft + " of " + durability);
+						if(!(plugin.getStorage().getTotalDurability(block) < 0))
+						{
+							String durability = ObsidianMath.smartRound(plugin.getStorage().getTotalDurability(block));
+							String durabilityLeft = ObsidianMath.smartRound(plugin.getStorage().getRemainingDurability(block));
+							player.sendMessage(ChatColor.GOLD + "Durability: " + durabilityLeft + " of " + durability);
+						}
+						else
+							player.sendMessage(ChatColor.GOLD + "Durability: Unlimited");
 					} catch (UnknownBlockTypeException e) {}
 		}
 	}
