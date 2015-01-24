@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -21,7 +22,7 @@ public class BlockListener implements Listener
 	}
 
 	@SuppressWarnings("deprecation")
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
 	public void onEntityExplode(EntityExplodeEvent event)
 	{
 		Iterator<Block> it = event.blockList().iterator();
@@ -46,7 +47,7 @@ public class BlockListener implements Listener
 				}
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
 	public void onBlockBreak(BlockBreakEvent event)
 	{
 		StorageHandler storage = plugin.getStorage();
@@ -58,7 +59,7 @@ public class BlockListener implements Listener
 	 * 
 	 * @param loc Location of the block
 	 * @param source Location of the explosion source
-	 * @param explisive The EntityType of the explosion cause
+	 * @param explosive The EntityType of the explosion cause
 	 */
 	@SuppressWarnings("deprecation")
 	private void explodeBlock(Location loc, Location source, EntityType explosive)
