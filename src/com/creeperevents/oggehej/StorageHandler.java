@@ -79,7 +79,7 @@ public class StorageHandler
 	{
 		if(addDamage <= 0 || getTotalDurability(block) < 0)
 			return false;
-		
+
 		String hash = generateHash(block.getLocation());
 		double totalDamage = damage.containsKey(hash) ? addDamage + (double) damage.get(hash).getDamage() : addDamage;
 

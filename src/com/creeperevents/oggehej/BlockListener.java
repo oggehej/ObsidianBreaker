@@ -69,8 +69,11 @@ public class BlockListener implements Listener
 			try
 			{
 				double liquidDivider = plugin.getConfig().getDouble("LiquidMultiplier");
+				boolean isLiquid = source.getBlock().isLiquid();
+				if(isLiquid && liquidDivider <= 0)
+					return;
 				double rawDamage = plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());
-				if(plugin.getStorage().addDamage(block, source.getBlock().isLiquid() && !(liquidDivider <= 0) ? rawDamage / liquidDivider : rawDamage))
+				if(plugin.getStorage().addDamage(block, isLiquid ? rawDamage / liquidDivider : rawDamage))
 					if(new Random().nextInt(100) + 1 >= plugin.getConfig().getInt("DropChance"))
 						block.setType(Material.AIR);
 					else
