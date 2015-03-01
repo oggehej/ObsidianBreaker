@@ -1,4 +1,4 @@
-package com.creeperevents.oggehej;
+package com.creeperevents.oggehej.obsidianbreaker;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;

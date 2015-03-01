@@ -1,4 +1,4 @@
-package com.creeperevents.oggehej;
+package com.creeperevents.oggehej.obsidianbreaker;
 
 import java.text.DecimalFormat;
 

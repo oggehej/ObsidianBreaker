@@ -1,4 +1,4 @@
-package com.creeperevents.oggehej;
+package com.creeperevents.oggehej.obsidianbreaker;
 
 public class UnknownBlockTypeException extends Exception
 {
