@@ -2,7 +2,7 @@ package com.creeperevents.oggehej.obsidianbreaker;
 
 class BlockStatus
 {
-	private double damage;
+	private float damage;
 	private boolean modified = true;
 
 	/**
@@ -11,7 +11,7 @@ class BlockStatus
 	 * 
 	 * @param damage Current damage
 	 */
-	BlockStatus(double damage)
+	BlockStatus(float damage)
 	{
 		this.damage = damage;
 	}
@@ -21,7 +21,7 @@ class BlockStatus
 	 * 
 	 * @return Damage
 	 */
-	double getDamage()
+	float getDamage()
 	{
 		return damage;
 	}
@@ -31,7 +31,7 @@ class BlockStatus
 	 * 
 	 * @param damage Damage
 	 */
-	void setDamage(double damage)
+	void setDamage(float damage)
 	{
 		this.damage = damage;
 	}

@@ -46,10 +46,10 @@ public class StorageHandler
 	 * @throws UnknownBlockTypeException There's no durability data for this block type
 	 */
 	@SuppressWarnings("deprecation")
-	public double getTotalDurability(Block block) throws UnknownBlockTypeException
+	public float getTotalDurability(Block block) throws UnknownBlockTypeException
 	{
 		if(isValidBlock(block))
-			return plugin.getConfig().getDouble("Blocks." + block.getTypeId());
+			return (float) plugin.getConfig().getDouble("Blocks." + block.getTypeId());
 		else
 			throw new UnknownBlockTypeException();
 	}
@@ -61,10 +61,10 @@ public class StorageHandler
 	 * @return Remaining durability
 	 * @throws UnknownBlockTypeException There's no durability data for this block type
 	 */
-	public double getRemainingDurability(Block block) throws UnknownBlockTypeException
+	public float getRemainingDurability(Block block) throws UnknownBlockTypeException
 	{
 		String hash = generateHash(block.getLocation());
-		return getTotalDurability(block) - (this.damage.containsKey(hash) ? this.damage.get(hash).getDamage() : 0D);
+		return getTotalDurability(block) - (this.damage.containsKey(hash) ? this.damage.get(hash).getDamage() : 0F);
 	}
 
 	/**
@@ -75,15 +75,15 @@ public class StorageHandler
 	 * @return Return true if the durability left is <= 0
 	 * @throws UnknownBlockTypeException There's no durability data for this block type
 	 */
-	public boolean addDamage(Block block, double addDamage) throws UnknownBlockTypeException
+	public boolean addDamage(Block block, float addDamage) throws UnknownBlockTypeException
 	{
 		if(addDamage <= 0 || getTotalDurability(block) < 0)
 			return false;
 
 		String hash = generateHash(block.getLocation());
-		double totalDamage = damage.containsKey(hash) ? addDamage + (double) damage.get(hash).getDamage() : addDamage;
+		float totalDamage = damage.containsKey(hash) ? addDamage + damage.get(hash).getDamage() : addDamage;
 
-		if(totalDamage >= getTotalDurability(block) - 0.00001)
+		if(totalDamage >= getTotalDurability(block) - 0.001f)
 		{
 			damage.remove(hash);
 			return true;

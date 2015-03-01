@@ -33,7 +33,7 @@ public class BlockListener implements Listener
 				it.remove();
 		}
 
-		double unalteredRadius = plugin.getConfig().getDouble("BlastRadius");
+		float unalteredRadius = (float) plugin.getConfig().getDouble("BlastRadius");
 		int radius = (int) Math.ceil(unalteredRadius);
 		Location detonatorLoc = event.getLocation();
 
@@ -68,11 +68,11 @@ public class BlockListener implements Listener
 		if(plugin.getConfig().getConfigurationSection("Blocks").contains(Integer.toString(block.getTypeId())))
 			try
 			{
-				double liquidDivider = plugin.getConfig().getDouble("LiquidMultiplier");
+				float liquidDivider = (float) plugin.getConfig().getDouble("LiquidMultiplier");
 				boolean isLiquid = source.getBlock().isLiquid();
 				if(isLiquid && liquidDivider <= 0)
 					return;
-				double rawDamage = plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());
+				float rawDamage = (float) plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());
 				if(plugin.getStorage().addDamage(block, isLiquid ? rawDamage / liquidDivider : rawDamage))
 					if(new Random().nextInt(100) + 1 >= plugin.getConfig().getInt("DropChance"))
 						block.setType(Material.AIR);

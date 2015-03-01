@@ -40,7 +40,7 @@ public class ObsidianBreaker extends JavaPlugin
 
 		// Initialise block regeneration
 		// Configuration can be set to a negative frequency in order to disable
-		long freq = (long) (getConfig().getDouble("Regen.Frequency") * 20 * 60);
+		long freq = getConfig().getLong("Regen.Frequency") * 20 * 60;
 		new BukkitRunnable()
 		{
 			@Override
@@ -52,8 +52,8 @@ public class ObsidianBreaker extends JavaPlugin
 						val.getValue().setModified(false);
 					else
 					{
-						val.getValue().setDamage(val.getValue().getDamage() - getConfig().getDouble("Regen.Amount"));
-						if(val.getValue().getDamage() < 0.00001D)
+						val.getValue().setDamage(val.getValue().getDamage() - (float) getConfig().getDouble("Regen.Amount"));
+						if(val.getValue().getDamage() < 0.001f)
 							storage.damage.remove(val.getKey());							
 					}
 				}
