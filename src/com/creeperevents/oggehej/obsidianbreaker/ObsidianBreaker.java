@@ -35,6 +35,9 @@ public class ObsidianBreaker extends JavaPlugin
 			metrics.start();
 		} catch (IOException e) {}
 
+		// Initialise command
+		getCommand("obsidianbreaker").setExecutor(new CommandHandler(this));
+
 		// Initialise block regeneration
 		// Configuration can be set to a negative frequency in order to disable
 		long freq = (long) (getConfig().getDouble("Regen.Frequency") * 20 * 60);
