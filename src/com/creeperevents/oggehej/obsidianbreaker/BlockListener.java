@@ -12,6 +12,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 
 public class BlockListener implements Listener
 {
@@ -68,8 +70,19 @@ public class BlockListener implements Listener
 		if(plugin.getConfig().getConfigurationSection("Blocks").contains(Integer.toString(block.getTypeId())))
 			try
 			{
+				boolean isLiquid = false;
+				Vector v = new Vector(loc.getBlockX() - source.getBlockX(), loc.getBlockY() - source.getBlockY(), loc.getBlockZ() - source.getBlockZ());
+				BlockIterator it = new BlockIterator(source.getWorld(), source.toVector(), v, 0, (int) Math.floor(source.distance(loc)));
+				while(it.hasNext())
+				{
+					if(it.next().isLiquid())
+					{
+						isLiquid = true;
+						break;
+					}
+				}
+				
 				float liquidDivider = (float) plugin.getConfig().getDouble("LiquidMultiplier");
-				boolean isLiquid = source.getBlock().isLiquid();
 				if(isLiquid && liquidDivider <= 0)
 					return;
 				float rawDamage = (float) plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());

@@ -13,9 +13,6 @@ import org.mcstats.MetricsLite;
 
 public class ObsidianBreaker extends JavaPlugin
 {
-	@SuppressWarnings("unused")
-	private static File LANG_FILE;
-
 	private BlockListener blockListener;
 	private PlayerListener playerListener;
 	private StorageHandler storage;
@@ -79,8 +76,7 @@ public class ObsidianBreaker extends JavaPlugin
 	}
 
 	/**
-	 * Load the lang.yml file.
-	 * @return The lang.yml config.
+	 * Load/reload the lang.yml file.
 	 */
 	public void setupLocale()
 	{
@@ -94,8 +90,8 @@ public class ObsidianBreaker extends JavaPlugin
 			catch(IOException e)
 			{
 				e.printStackTrace();
-				Bukkit.getLogger().severe("[" + getName() + "] Couldn't create language file. Disabling.");
-				setEnabled(false);
+				Bukkit.getLogger().severe("[" + getName() + "] Couldn't create language file!");
+				return;
 			}
 
 		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);

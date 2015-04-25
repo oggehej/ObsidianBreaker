@@ -22,14 +22,18 @@ public enum Locale
 	}
 
 	/**
-	 * Set the {@code YamlConfiguration} to use.
-	 * @param config The configuration to set.
+	 * Set the {@code YamlConfiguration} to use
+	 * 
+	 * @param config The configuration to set
 	 */
 	static void setFile(YamlConfiguration config)
 	{
 		LANG = config;
 	}
 
+	/**
+	 * @return Formatted {@code String}
+	 */
 	@Override
 	public String toString()
 	{
@@ -41,8 +45,9 @@ public enum Locale
 	}
 
 	/**
-	 * Get the default value of the path.
-	 * @return The default value of the path.
+	 * Get the default value of the path
+	 * 
+	 * @return The default value of the path
 	 */
 	public String getDefault()
 	{
