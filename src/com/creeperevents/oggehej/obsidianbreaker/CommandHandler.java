@@ -20,19 +20,19 @@ public class CommandHandler implements CommandExecutor
 		{
 			sender.sendMessage(ChatColor.AQUA + " -- [" + plugin.getName() + " v" + plugin.getDescription().getVersion() + "] --");
 			if(sender.hasPermission("obsidianbreaker.reload"))
-				sender.sendMessage(ChatColor.GOLD + "/" + label + " reload" + ChatColor.WHITE + " - Reload the config");
+				sender.sendMessage(ChatColor.GOLD + "/" + label + " reload" + ChatColor.WHITE + " - " + Locale.RELOAD_CONFIG);
 		}
 		else if(args[0].equalsIgnoreCase("reload"))
 			if(sender.hasPermission("obsidianbreaker.reload"))
 			{
-				plugin.saveConfig();
 				plugin.reloadConfig();
-				sender.sendMessage(ChatColor.GOLD + "Config reloaded!");
+				plugin.setupLocale();
+				sender.sendMessage(Locale.CONFIG_RELOADED.toString());
 			}
 			else
-				sender.sendMessage(ChatColor.RED + "No permission!");
+				sender.sendMessage(Locale.NO_PERMISSION.toString());
 		else
-			sender.sendMessage(ChatColor.RED + "Invalid arguments!");
+			sender.sendMessage(Locale.INVALID_ARGUMENTS.toString());
 		return true;
 	}
 }

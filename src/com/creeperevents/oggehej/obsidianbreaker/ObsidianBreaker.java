@@ -1,8 +1,11 @@
 package com.creeperevents.oggehej.obsidianbreaker;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -10,6 +13,9 @@ import org.mcstats.MetricsLite;
 
 public class ObsidianBreaker extends JavaPlugin
 {
+	@SuppressWarnings("unused")
+	private static File LANG_FILE;
+
 	private BlockListener blockListener;
 	private PlayerListener playerListener;
 	private StorageHandler storage;
@@ -28,6 +34,7 @@ public class ObsidianBreaker extends JavaPlugin
 		// Load configuration file
 		getConfig().options().copyDefaults(true);
 		saveConfig();
+		setupLocale();
 
 		// Initialise metrics
 		try {
@@ -69,5 +76,41 @@ public class ObsidianBreaker extends JavaPlugin
 	public StorageHandler getStorage()
 	{
 		return storage;
+	}
+
+	/**
+	 * Load the lang.yml file.
+	 * @return The lang.yml config.
+	 */
+	public void setupLocale()
+	{
+		File lang = new File(getDataFolder(), "lang.yml");
+
+		if (!lang.exists())
+			try
+			{
+				lang.createNewFile();
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+				Bukkit.getLogger().severe("[" + getName() + "] Couldn't create language file. Disabling.");
+				setEnabled(false);
+			}
+
+		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
+
+		for(Locale item : Locale.values())
+			if (conf.getString(item.name()) == null)
+				conf.set(item.name(), item.getDefault());
+
+		Locale.setFile(conf);
+
+		try {
+			conf.save(lang);
+		} catch(IOException e) {
+			Bukkit.getLogger().warning("Failed to save lang.yml");
+			e.printStackTrace();
+		}
 	}
 }

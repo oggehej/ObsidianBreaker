@@ -3,7 +3,6 @@ package com.creeperevents.oggehej.obsidianbreaker;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,10 +38,10 @@ public class PlayerListener implements Listener
 
 						String durability = format.format(plugin.getStorage().getTotalDurability(block));
 						String durabilityLeft = format.format(plugin.getStorage().getRemainingDurability(block));
-						player.sendMessage(ChatColor.GOLD + "Durability: " + durabilityLeft + " of " + durability);
+						player.sendMessage(Locale.DURABILITY + " " + Locale.DURABILITY_LEFT.toString().replace("{0}", durabilityLeft).replace("{1}", durability));
 					}
 					else
-						player.sendMessage(ChatColor.GOLD + "Durability: Unlimited");
+						player.sendMessage(Locale.DURABILITY + " " + Locale.UNLIMITED);
 				} catch (UnknownBlockTypeException e) {}
 		}
 	}
