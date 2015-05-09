@@ -59,29 +59,25 @@ public class BlockListener implements Listener
 	/**
 	 * Explode a block
 	 * 
-	 * @param loc Location of the block
-	 * @param source Location of the explosion source
-	 * @param explosive The EntityType of the explosion cause
+	 * @param loc {@code Location} of the block
+	 * @param source {@code Location} of the explosion source
+	 * @param explosive The {@code EntityType} of the explosion cause
 	 */
-	@SuppressWarnings("deprecation")
 	private void explodeBlock(Location loc, Location source, EntityType explosive)
 	{
 		Block block = loc.getWorld().getBlockAt(loc);
-		if(plugin.getConfig().getConfigurationSection("Blocks").contains(Integer.toString(block.getTypeId())))
-			try
-			{
+		if(plugin.getStorage().isValidBlock(block))
+			try {
 				boolean isLiquid = false;
 				Vector v = new Vector(loc.getBlockX() - source.getBlockX(), loc.getBlockY() - source.getBlockY(), loc.getBlockZ() - source.getBlockZ());
 				BlockIterator it = new BlockIterator(source.getWorld(), source.toVector(), v, 0, (int) Math.floor(source.distance(loc)));
 				while(it.hasNext())
-				{
 					if(it.next().isLiquid())
 					{
 						isLiquid = true;
 						break;
 					}
-				}
-				
+
 				float liquidDivider = (float) plugin.getConfig().getDouble("LiquidMultiplier");
 				if(isLiquid && liquidDivider <= 0)
 					return;
@@ -91,6 +87,8 @@ public class BlockListener implements Listener
 						block.setType(Material.AIR);
 					else
 						block.breakNaturally();
+				else
+					plugin.getStorage().renderCracks(block);
 			} catch (UnknownBlockTypeException e) {}
 	}
 }

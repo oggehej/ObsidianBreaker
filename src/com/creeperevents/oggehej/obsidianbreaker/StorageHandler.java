@@ -1,7 +1,9 @@
 package com.creeperevents.oggehej.obsidianbreaker;
 
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -16,14 +18,31 @@ public class StorageHandler
 	ConcurrentHashMap<String, BlockStatus> damage = new ConcurrentHashMap<String, BlockStatus>();
 
 	/**
-	 * Generate a unique string for the block location
+	 * Generate a unique {@code String} for the {@code Block} {@code Location}
 	 * 
 	 * @param loc Block location
 	 * @return Unique string
 	 */
 	public String generateHash(Location loc)
 	{
-		return loc.getWorld() + "-" + loc.getBlockX() + "-" + loc.getBlockY() + "-" + loc.getBlockZ();
+		return loc.getWorld().getUID().toString() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
+	}
+
+	/**
+	 * Generate a {@code Location} from the unique {@code String}
+	 * 
+	 * @param string
+	 * @return Location
+	 */
+	public Location generateLocation(String string)
+	{
+		try {
+			String[] s = string.split(":");
+			return new Location(Bukkit.getWorld(UUID.fromString(s[0])), Integer.parseInt(s[1]), Integer.parseInt(s[2]), Integer.parseInt(s[3]));
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -33,7 +52,7 @@ public class StorageHandler
 	 * @return Whether we're handling these kind of blocks
 	 */
 	@SuppressWarnings("deprecation")
-	private boolean isValidBlock(Block block)
+	public boolean isValidBlock(Block block)
 	{
 		return plugin.getConfig().getConfigurationSection("Blocks").getKeys(false).contains(Integer.toString(block.getTypeId()));
 	}
@@ -93,5 +112,26 @@ public class StorageHandler
 			damage.put(hash, new BlockStatus(totalDamage));
 			return false;
 		}
+	}
+
+	/**
+	 * Render cracks in {@code Block}
+	 * 
+	 * @param block Block
+	 */
+	public void renderCracks(Block block)
+	{
+		if(plugin.getConfig().getBoolean("BlockCracks.Enabled"))
+			try {
+				float totalDurability = getTotalDurability(block);
+
+				if(totalDurability <= 0)
+					return;
+
+				int durability = 10 - (int) Math.floor(getRemainingDurability(block) / getTotalDurability(block) * 10);
+				plugin.getNMS().sendCrackEffect(block, durability);
+			} catch (UnknownBlockTypeException e) {
+				return;
+			}
 	}
 }

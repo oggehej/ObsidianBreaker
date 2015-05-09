@@ -27,6 +27,8 @@ public class CommandHandler implements CommandExecutor
 			{
 				plugin.reloadConfig();
 				plugin.setupLocale();
+				plugin.scheduleCrackCheck();
+				plugin.scheduleRegenRunner();
 				sender.sendMessage(Locale.CONFIG_RELOADED.toString());
 			}
 			else

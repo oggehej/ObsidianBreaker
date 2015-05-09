@@ -13,6 +13,9 @@ Blocks:
 Regen:
   Frequency: 10
   Amount: 1
+BlockCracks:
+  Enabled: true
+  Interval: 5
 ExplosionSources:
   PRIMED_TNT: 1
   CREEPER: 1
