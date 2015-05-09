@@ -158,25 +158,7 @@ public class ObsidianBreaker extends JavaPlugin
 		}
 
 		if(getConfig().getBoolean("BlockCracks.Enabled"))
-		{
-			class CrackRunnable extends BukkitRunnable {
-				ObsidianBreaker plugin;
-				CrackRunnable(ObsidianBreaker plugin) {
-					this.plugin = plugin;
-				}
-				@Override
-				public void run() {
-					for(String hash : plugin.getStorage().damage.keySet())
-					{
-						Location loc = plugin.getStorage().generateLocation(hash);
-
-						plugin.getStorage().renderCracks(loc.getBlock());
-					}
-				}
-			}
-
 			crackRunner = new CrackRunnable(this).runTaskTimerAsynchronously(this, 0, getConfig().getLong("BlockCracks.Interval") * 20);
-		}
 	}
 
 	void scheduleRegenRunner()
@@ -209,6 +191,25 @@ public class ObsidianBreaker extends JavaPlugin
 					}
 				}
 			}.runTaskTimerAsynchronously(this, freq, freq);
+		}
+	}
+
+	static class CrackRunnable extends BukkitRunnable
+	{
+		ObsidianBreaker plugin;
+		CrackRunnable(ObsidianBreaker plugin)
+		{
+			this.plugin = plugin;
+		}
+
+		@Override
+		public void run()
+		{
+			for(String hash : plugin.getStorage().damage.keySet())
+			{
+				Location loc = plugin.getStorage().generateLocation(hash);
+				plugin.getStorage().renderCracks(loc.getBlock());
+			}
 		}
 	}
 }

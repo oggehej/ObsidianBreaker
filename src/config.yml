@@ -1,6 +1,7 @@
 # Configuration file for ObsidianDestroyer
 # Set LiquidMultiplier, Regen.Frequency or any ExplosionSource to -1 if you want to disable. Will also make blocks unbreakable.
 # DropChance is measured in percent. Default in Minecraft is 30 (%).
+# BlockCracks interval is not recommended to be set over 15
 
 BlastRadius: 2
 LiquidMultiplier: 2
@@ -15,7 +16,7 @@ Regen:
   Amount: 1
 BlockCracks:
   Enabled: true
-  Interval: 5
+  Interval: 10
 ExplosionSources:
   PRIMED_TNT: 1
   CREEPER: 1

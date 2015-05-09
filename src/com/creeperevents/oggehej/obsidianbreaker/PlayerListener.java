@@ -3,12 +3,15 @@ package com.creeperevents.oggehej.obsidianbreaker;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class PlayerListener implements Listener
 {
@@ -44,5 +47,27 @@ public class PlayerListener implements Listener
 						player.sendMessage(Locale.DURABILITY + " " + Locale.UNLIMITED);
 				} catch (UnknownBlockTypeException e) {}
 		}
+	}
+
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event)
+	{
+		if(plugin.getConfig().getBoolean("BlockCracks.Enabled"))
+		{
+			Location from = event.getFrom();
+			Location to = event.getTo();
+
+			if(from.getWorld() == to.getWorld() && from.distance(to) < 50)
+				return;
+
+			new ObsidianBreaker.CrackRunnable(plugin).runTaskAsynchronously(plugin);
+		}
+	}
+
+	@EventHandler
+	public void onPlayerLogin(PlayerLoginEvent event)
+	{
+		if(plugin.getConfig().getBoolean("BlockCracks.Enabled"))
+			new ObsidianBreaker.CrackRunnable(plugin).runTaskAsynchronously(plugin);
 	}
 }
