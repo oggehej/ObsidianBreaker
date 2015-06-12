@@ -3,8 +3,7 @@ package com.creeperevents.oggehej.obsidianbreaker;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public enum Locale
-{
+public enum Locale {
 	DURABILITY("&6Durability:"),
 	DURABILITY_LEFT("&3{0} &6of &3{1}"),
 	UNLIMITED("&3Unlimited"),
@@ -16,8 +15,7 @@ public enum Locale
 	private String def;
 	private static YamlConfiguration LANG;
 
-	Locale(String def)
-	{
+	Locale(String def) {
 		this.def = def;
 	}
 
@@ -26,8 +24,7 @@ public enum Locale
 	 * 
 	 * @param config The configuration to set
 	 */
-	static void setFile(YamlConfiguration config)
-	{
+	static void setFile(YamlConfiguration config) {
 		LANG = config;
 	}
 
@@ -35,8 +32,7 @@ public enum Locale
 	 * @return Formatted {@code String}
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		try {
 			return ChatColor.translateAlternateColorCodes('&', LANG.getString(name()));
 		} catch(Exception e) {
@@ -49,8 +45,7 @@ public enum Locale
 	 * 
 	 * @return The default value of the path
 	 */
-	public String getDefault()
-	{
+	public String getDefault() {
 		return this.def;
 	}
 }
