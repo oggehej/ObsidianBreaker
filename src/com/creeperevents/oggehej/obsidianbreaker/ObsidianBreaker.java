@@ -25,8 +25,7 @@ public class ObsidianBreaker extends JavaPlugin
 	private BukkitTask crackRunner;
 	BukkitTask regenRunner;
 
-	public void onEnable()
-	{
+	public void onEnable() {
 		blockListener = new BlockListener(this);
 		playerListener = new PlayerListener(this);
 		storage = new StorageHandler(this);
@@ -58,8 +57,7 @@ public class ObsidianBreaker extends JavaPlugin
 		scheduleCrackCheck();
 	}
 
-	public void onDisable()
-	{
+	public void onDisable() {
 		storage = null;
 		blockListener = null;
 		playerListener = null;
@@ -70,29 +68,24 @@ public class ObsidianBreaker extends JavaPlugin
 	 * 
 	 * @return Storage handler
 	 */
-	public StorageHandler getStorage()
-	{
+	public StorageHandler getStorage() {
 		return storage;
 	}
 
 	/**
 	 * Load/reload the lang.yml file.
 	 */
-	void setupLocale()
-	{
+	void setupLocale() {
 		File lang = new File(getDataFolder(), "lang.yml");
 
 		if (!lang.exists())
-			try
-		{
+			try{
 				lang.createNewFile();
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-			Bukkit.getLogger().severe("[" + getName() + "] Couldn't create language file!");
-			return;
-		}
+			} catch(IOException e) {
+				e.printStackTrace();
+				Bukkit.getLogger().severe("[" + getName() + "] Couldn't create language file!");
+				return;
+			}
 
 		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
 
@@ -115,30 +108,24 @@ public class ObsidianBreaker extends JavaPlugin
 	 * 
 	 * @return {@code NMS} handler
 	 */
-	public NMS getNMS()
-	{
+	public NMS getNMS() {
 		return this.nmsHandler;
 	}
 
 	/**
 	 * Set up the NMS functions
 	 */
-	private void setupNMS()
-	{
+	private void setupNMS() {
 		String packageName = this.getServer().getClass().getPackage().getName();
 		String version = packageName.substring(packageName.lastIndexOf('.') + 1);
 
-		try
-		{
+		try {
 			final Class<?> clazz = Class.forName(getClass().getPackage().getName() + ".nms." + version);
-			if (NMS.class.isAssignableFrom(clazz))
-			{
+			if (NMS.class.isAssignableFrom(clazz)) {
 				getLogger().info("Using NMS version " + version);
 				this.nmsHandler = (NMS) clazz.getConstructor().newInstance();
 			}
-		}
-		catch (final Exception e)
-		{
+		} catch (final Exception e) {
 			getLogger().info("Couldn't find support for " + version +". Block cracks not activated.");
 			class Dummy implements NMS {
 				@Override
@@ -149,10 +136,8 @@ public class ObsidianBreaker extends JavaPlugin
 		}
 	}
 
-	void scheduleCrackCheck()
-	{
-		if(crackRunner != null)
-		{
+	void scheduleCrackCheck() {
+		if(crackRunner != null) {
 			crackRunner.cancel();
 			crackRunner = null;
 		}
@@ -161,29 +146,22 @@ public class ObsidianBreaker extends JavaPlugin
 			crackRunner = new CrackRunnable(this).runTaskTimerAsynchronously(this, 0, getConfig().getLong("BlockCracks.Interval") * 20);
 	}
 
-	void scheduleRegenRunner()
-	{
-		if(regenRunner != null)
-		{
+	void scheduleRegenRunner() {
+		if(regenRunner != null) {
 			regenRunner.cancel();
 			regenRunner = null;
 		}
 
 		// Configuration can be set to a negative frequency in order to disable
 		long freq = getConfig().getLong("Regen.Frequency") * 20 * 60;
-		if(freq > 0)
-		{
-			regenRunner = new BukkitRunnable()
-			{
+		if(freq > 0) {
+			regenRunner = new BukkitRunnable() {
 				@Override
-				public void run()
-				{
-					for(Entry<String, BlockStatus> val : storage.damage.entrySet())
-					{
+				public void run() {
+					for(Entry<String, BlockStatus> val : storage.damage.entrySet()) {
 						if(val.getValue().isModified())
 							val.getValue().setModified(false);
-						else
-						{
+						else {
 							val.getValue().setDamage(val.getValue().getDamage() - (float) getConfig().getDouble("Regen.Amount"));
 							if(val.getValue().getDamage() < 0.001f)
 								storage.damage.remove(val.getKey());							
@@ -194,19 +172,15 @@ public class ObsidianBreaker extends JavaPlugin
 		}
 	}
 
-	static class CrackRunnable extends BukkitRunnable
-	{
+	static class CrackRunnable extends BukkitRunnable {
 		ObsidianBreaker plugin;
-		CrackRunnable(ObsidianBreaker plugin)
-		{
+		CrackRunnable(ObsidianBreaker plugin) {
 			this.plugin = plugin;
 		}
 
 		@Override
-		public void run()
-		{
-			for(String hash : plugin.getStorage().damage.keySet())
-			{
+		public void run() {
+			for(String hash : plugin.getStorage().damage.keySet()) {
 				Location loc = plugin.getStorage().generateLocation(hash);
 				plugin.getStorage().renderCracks(loc.getBlock());
 			}

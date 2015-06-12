@@ -15,21 +15,17 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-public class BlockListener implements Listener
-{
+public class BlockListener implements Listener {
 	private ObsidianBreaker plugin;
-	BlockListener(ObsidianBreaker instance)
-	{
+	BlockListener(ObsidianBreaker instance) {
 		this.plugin = instance;
 	}
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-	public void onEntityExplode(EntityExplodeEvent event)
-	{
+	public void onEntityExplode(EntityExplodeEvent event) {
 		Iterator<Block> it = event.blockList().iterator();
-		while(it.hasNext())
-		{
+		while(it.hasNext()) {
 			Block block = it.next();
 			if(plugin.getConfig().getConfigurationSection("Blocks").getKeys(false).contains(Integer.toString(block.getTypeId())))
 				it.remove();
@@ -41,8 +37,7 @@ public class BlockListener implements Listener
 
 		for (int x = -radius; x <= radius; x++)
 			for (int y = -radius; y <= radius; y++)
-				for (int z = -radius; z <= radius; z++)
-				{
+				for (int z = -radius; z <= radius; z++) {
 					Location targetLoc = new Location(detonatorLoc.getWorld(), detonatorLoc.getX() + x, detonatorLoc.getY() + y, detonatorLoc.getZ() + z);
 					if (detonatorLoc.distance(targetLoc) <= unalteredRadius)
 						explodeBlock(targetLoc, detonatorLoc, event.getEntityType());
@@ -50,8 +45,7 @@ public class BlockListener implements Listener
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-	public void onBlockBreak(BlockBreakEvent event)
-	{
+	public void onBlockBreak(BlockBreakEvent event) {
 		StorageHandler storage = plugin.getStorage();
 		storage.damage.remove(storage.generateHash(event.getBlock().getLocation()));
 	}
@@ -63,8 +57,7 @@ public class BlockListener implements Listener
 	 * @param source {@code Location} of the explosion source
 	 * @param explosive The {@code EntityType} of the explosion cause
 	 */
-	private void explodeBlock(Location loc, Location source, EntityType explosive)
-	{
+	private void explodeBlock(Location loc, Location source, EntityType explosive) {
 		Block block = loc.getWorld().getBlockAt(loc);
 		if(plugin.getStorage().isValidBlock(block))
 			try {
@@ -72,8 +65,7 @@ public class BlockListener implements Listener
 				Vector v = new Vector(loc.getBlockX() - source.getBlockX(), loc.getBlockY() - source.getBlockY(), loc.getBlockZ() - source.getBlockZ());
 				BlockIterator it = new BlockIterator(source.getWorld(), source.toVector(), v, 0, (int) Math.floor(source.distance(loc)));
 				while(it.hasNext())
-					if(it.next().isLiquid())
-					{
+					if(it.next().isLiquid()) {
 						isLiquid = true;
 						break;
 					}

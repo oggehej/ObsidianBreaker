@@ -1,7 +1,6 @@
 package com.creeperevents.oggehej.obsidianbreaker;
 
-class BlockStatus
-{
+class BlockStatus {
 	private float damage;
 	private boolean modified = true;
 
@@ -11,8 +10,7 @@ class BlockStatus
 	 * 
 	 * @param damage Current damage
 	 */
-	BlockStatus(float damage)
-	{
+	BlockStatus(float damage) {
 		this.damage = damage;
 	}
 
@@ -21,8 +19,7 @@ class BlockStatus
 	 * 
 	 * @return Damage
 	 */
-	float getDamage()
-	{
+	float getDamage() {
 		return damage;
 	}
 
@@ -31,8 +28,7 @@ class BlockStatus
 	 * 
 	 * @param damage Damage
 	 */
-	void setDamage(float damage)
-	{
+	void setDamage(float damage) {
 		this.damage = damage;
 	}
 
@@ -41,8 +37,7 @@ class BlockStatus
 	 * 
 	 * @return Recently modified
 	 */
-	boolean isModified()
-	{
+	boolean isModified() {
 		return modified;
 	}
 
@@ -51,8 +46,7 @@ class BlockStatus
 	 * 
 	 * @param modified Recently modified
 	 */
-	void setModified(boolean modified)
-	{
+	void setModified(boolean modified) {
 		this.modified = modified;
 	}
 }

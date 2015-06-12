@@ -5,33 +5,26 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class CommandHandler implements CommandExecutor
-{
+public class CommandHandler implements CommandExecutor {
 	private ObsidianBreaker plugin;
-	CommandHandler(ObsidianBreaker instance)
-	{
+	CommandHandler(ObsidianBreaker instance) {
 		plugin = instance;
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-	{
-		if(args.length == 0)
-		{
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if(args.length == 0) {
 			sender.sendMessage(ChatColor.AQUA + " -- [" + plugin.getName() + " v" + plugin.getDescription().getVersion() + "] --");
 			if(sender.hasPermission("obsidianbreaker.reload"))
 				sender.sendMessage(ChatColor.GOLD + "/" + label + " reload" + ChatColor.WHITE + " - " + Locale.RELOAD_CONFIG);
-		}
-		else if(args[0].equalsIgnoreCase("reload"))
-			if(sender.hasPermission("obsidianbreaker.reload"))
-			{
+		} else if(args[0].equalsIgnoreCase("reload"))
+			if(sender.hasPermission("obsidianbreaker.reload")) {
 				plugin.reloadConfig();
 				plugin.setupLocale();
 				plugin.scheduleCrackCheck();
 				plugin.scheduleRegenRunner();
 				sender.sendMessage(Locale.CONFIG_RELOADED.toString());
-			}
-			else
+			} else
 				sender.sendMessage(Locale.NO_PERMISSION.toString());
 		else
 			sender.sendMessage(Locale.INVALID_ARGUMENTS.toString());

@@ -8,11 +8,9 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
 
-public class v1_8_R2 implements NMS
-{
+public class v1_8_R2 implements NMS {
 	@Override
-	public void sendCrackEffect(Block block, int damage)
-	{
+	public void sendCrackEffect(Block block, int damage) {
 		int x = block.getX(), y = block.getY(), z = block.getZ();
 		int dimension = ((CraftWorld) block.getWorld()).getHandle().dimension;
 		PacketPlayOutBlockBreakAnimation packet = new PacketPlayOutBlockBreakAnimation(block.getLocation().hashCode(), new BlockPosition(x, y, z), damage);
@@ -20,8 +18,7 @@ public class v1_8_R2 implements NMS
 	}
 
 	@Override
-	public boolean isDummy()
-	{
+	public boolean isDummy() {
 		return false;
 	}
 }

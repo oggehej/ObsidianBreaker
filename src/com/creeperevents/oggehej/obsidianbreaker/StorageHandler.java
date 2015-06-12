@@ -7,11 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-public class StorageHandler
-{
+public class StorageHandler {
 	private ObsidianBreaker plugin;
-	StorageHandler(ObsidianBreaker instance)
-	{
+	StorageHandler(ObsidianBreaker instance) {
 		this.plugin = instance;
 	}
 
@@ -23,8 +21,7 @@ public class StorageHandler
 	 * @param loc Block location
 	 * @return Unique string
 	 */
-	public String generateHash(Location loc)
-	{
+	public String generateHash(Location loc) {
 		return loc.getWorld().getUID().toString() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
 	}
 
@@ -34,8 +31,7 @@ public class StorageHandler
 	 * @param string
 	 * @return Location
 	 */
-	public Location generateLocation(String string)
-	{
+	public Location generateLocation(String string) {
 		try {
 			String[] s = string.split(":");
 			return new Location(Bukkit.getWorld(UUID.fromString(s[0])), Integer.parseInt(s[1]), Integer.parseInt(s[2]), Integer.parseInt(s[3]));
@@ -52,8 +48,7 @@ public class StorageHandler
 	 * @return Whether we're handling these kind of blocks
 	 */
 	@SuppressWarnings("deprecation")
-	public boolean isValidBlock(Block block)
-	{
+	public boolean isValidBlock(Block block) {
 		return plugin.getConfig().getConfigurationSection("Blocks").getKeys(false).contains(Integer.toString(block.getTypeId()));
 	}
 
@@ -65,8 +60,7 @@ public class StorageHandler
 	 * @throws UnknownBlockTypeException There's no durability data for this block type
 	 */
 	@SuppressWarnings("deprecation")
-	public float getTotalDurability(Block block) throws UnknownBlockTypeException
-	{
+	public float getTotalDurability(Block block) throws UnknownBlockTypeException {
 		if(isValidBlock(block))
 			return (float) plugin.getConfig().getDouble("Blocks." + block.getTypeId());
 		else
@@ -80,8 +74,7 @@ public class StorageHandler
 	 * @return Remaining durability
 	 * @throws UnknownBlockTypeException There's no durability data for this block type
 	 */
-	public float getRemainingDurability(Block block) throws UnknownBlockTypeException
-	{
+	public float getRemainingDurability(Block block) throws UnknownBlockTypeException {
 		String hash = generateHash(block.getLocation());
 		return getTotalDurability(block) - (this.damage.containsKey(hash) ? this.damage.get(hash).getDamage() : 0F);
 	}
@@ -94,21 +87,17 @@ public class StorageHandler
 	 * @return Return true if the durability left is <= 0
 	 * @throws UnknownBlockTypeException There's no durability data for this block type
 	 */
-	public boolean addDamage(Block block, float addDamage) throws UnknownBlockTypeException
-	{
+	public boolean addDamage(Block block, float addDamage) throws UnknownBlockTypeException {
 		if(addDamage <= 0 || getTotalDurability(block) < 0)
 			return false;
 
 		String hash = generateHash(block.getLocation());
 		float totalDamage = damage.containsKey(hash) ? addDamage + damage.get(hash).getDamage() : addDamage;
 
-		if(totalDamage >= getTotalDurability(block) - 0.001f)
-		{
+		if(totalDamage >= getTotalDurability(block) - 0.001f) {
 			damage.remove(hash);
 			return true;
-		}
-		else
-		{
+		} else {
 			damage.put(hash, new BlockStatus(totalDamage));
 			return false;
 		}
@@ -119,8 +108,7 @@ public class StorageHandler
 	 * 
 	 * @param block Block
 	 */
-	public void renderCracks(Block block)
-	{
+	public void renderCracks(Block block) {
 		if(plugin.getConfig().getBoolean("BlockCracks.Enabled"))
 			try {
 				float totalDurability = getTotalDurability(block);
