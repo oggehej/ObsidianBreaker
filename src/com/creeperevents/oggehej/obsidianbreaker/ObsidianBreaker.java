@@ -158,14 +158,19 @@ public class ObsidianBreaker extends JavaPlugin
 			regenRunner = new BukkitRunnable() {
 				@Override
 				public void run() {
-					for(Entry<String, BlockStatus> val : storage.damage.entrySet()) {
-						if(val.getValue().isModified())
-							val.getValue().setModified(false);
-						else {
-							val.getValue().setDamage(val.getValue().getDamage() - (float) getConfig().getDouble("Regen.Amount"));
-							if(val.getValue().getDamage() < 0.001f)
-								storage.damage.remove(val.getKey());							
+					try {
+						for(Entry<String, BlockStatus> val : storage.damage.entrySet()) {
+							if(val.getValue().isModified())
+								val.getValue().setModified(false);
+							else {
+								val.getValue().setDamage(val.getValue().getDamage() - (float) getConfig().getDouble("Regen.Amount"));
+								if(val.getValue().getDamage() < 0.001f)
+									storage.damage.remove(val.getKey());							
+							}
 						}
+					} catch(Exception e) {
+						System.out.println("[ObsidianBreaker] Error occured while trying to regen block (task "+getTaskId()+")");
+						e.printStackTrace();
 					}
 				}
 			}.runTaskTimerAsynchronously(this, freq, freq);
@@ -180,9 +185,14 @@ public class ObsidianBreaker extends JavaPlugin
 
 		@Override
 		public void run() {
-			for(String hash : plugin.getStorage().damage.keySet()) {
-				Location loc = plugin.getStorage().generateLocation(hash);
-				plugin.getStorage().renderCracks(loc.getBlock());
+			try {
+				for(String hash : plugin.getStorage().damage.keySet()) {
+					Location loc = plugin.getStorage().generateLocation(hash);
+					plugin.getStorage().renderCracks(loc.getBlock());
+				}
+			} catch(Exception e) {
+				System.out.println("[ObsidianBreaker] Error occured while trying to show block cracks (task "+getTaskId()+")");
+				e.printStackTrace();
 			}
 		}
 	}
