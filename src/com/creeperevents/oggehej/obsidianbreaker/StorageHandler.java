@@ -36,6 +36,12 @@ public class StorageHandler {
 			String[] s = string.split(":");
 			return new Location(Bukkit.getWorld(UUID.fromString(s[0])), Integer.parseInt(s[1]), Integer.parseInt(s[2]), Integer.parseInt(s[3]));
 		} catch(Exception e) {
+			System.out.println("<-- Start -->");
+			Bukkit.getLogger().severe("[ObsidianBreaker] Couldn't generate hash from location (hash: "+string+")");
+			System.out.println("If you've decided to post this error message, "
+			+"please include everything between the start and end tag");
+			e.printStackTrace();
+			System.out.println("<-- End -->");
 			e.printStackTrace();
 			return null;
 		}
