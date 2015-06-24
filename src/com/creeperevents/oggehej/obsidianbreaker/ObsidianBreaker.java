@@ -85,7 +85,7 @@ public class ObsidianBreaker extends JavaPlugin
 				System.out.println("<-- Start -->");
 				Bukkit.getLogger().severe("[" + getName() + "] Couldn't create lang.yml!");
 				System.out.println("If you've decided to post this error message, "
-				+"please include everything between the start and end tag PLUS your config.yml AND lang.yml (if any)");
+						+"please include everything between the start and end tag PLUS your config.yml AND lang.yml (if any)");
 				e.printStackTrace();
 				System.out.println("<-- End -->");
 				return;
@@ -105,7 +105,7 @@ public class ObsidianBreaker extends JavaPlugin
 			System.out.println("<-- Start -->");
 			Bukkit.getLogger().severe("[" + getName() + "] Couldn't save lang.yml!");
 			System.out.println("If you've decided to post this error message, "
-			+"please include everything between the start and end tag PLUS your config.yml AND lang.yml (if any)");
+					+"please include everything between the start and end tag PLUS your config.yml AND lang.yml (if any)");
 			e.printStackTrace();
 			System.out.println("<-- End -->");
 		}
@@ -180,7 +180,7 @@ public class ObsidianBreaker extends JavaPlugin
 						System.out.println("<-- Start -->");
 						System.out.println("[ObsidianBreaker] Error occured while trying to regen block (task "+getTaskId()+")");
 						System.out.println("If you've decided to post this error message, "
-						+"please include everything between the start and end tag PLUS your config.yml");
+								+"please include everything between the start and end tag PLUS your config.yml");
 						e.printStackTrace();
 						System.out.println("<-- End -->");
 					}
@@ -197,19 +197,13 @@ public class ObsidianBreaker extends JavaPlugin
 
 		@Override
 		public void run() {
-			try {
-				for(String hash : plugin.getStorage().damage.keySet()) {
+			for(String hash : plugin.getStorage().damage.keySet()) {
+				try {
 					Location loc = plugin.getStorage().generateLocation(hash);
 					plugin.getStorage().renderCracks(loc.getBlock());
-				}
-			} catch(Exception e) {
-				System.out.println("<-- Start -->");
-				System.out.println("[ObsidianBreaker] Error occured while trying to show block cracks (task "+getTaskId()+")");
-				System.out.println("If you've decided to post this error message, "
-				+"please include everything between the start and end tag PLUS your config.yml");
-				e.printStackTrace();
-				System.out.println("<-- End -->");
+				} catch(Exception e) {}
 			}
 		}
 	}
+}
 }
