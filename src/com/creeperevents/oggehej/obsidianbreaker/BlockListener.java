@@ -63,12 +63,23 @@ public class BlockListener implements Listener {
 			try {
 				boolean isLiquid = false;
 				Vector v = new Vector(loc.getBlockX() - source.getBlockX(), loc.getBlockY() - source.getBlockY(), loc.getBlockZ() - source.getBlockZ());
-				BlockIterator it = new BlockIterator(source.getWorld(), source.toVector(), v, 0, (int) Math.floor(source.distance(loc)));
-				while(it.hasNext())
-					if(it.next().isLiquid()) {
-						isLiquid = true;
-						break;
-					}
+				try {
+					BlockIterator it = new BlockIterator(source.getWorld(), source.toVector(), v, 0, (int) Math.floor(source.distance(loc)));
+					while(it.hasNext())
+						if(it.next().isLiquid()) {
+							isLiquid = true;
+							break;
+						}
+				} catch(Exception e1) {
+					try {
+						BlockIterator it = new BlockIterator(source.getWorld(), source.toVector(), v, 0, (int) Math.floor(source.distance(loc)));
+						while(it.hasNext())
+							if(it.next().isLiquid()) {
+								isLiquid = true;
+								break;
+							}
+					} catch(Exception e2) {}
+				}
 
 				float liquidDivider = (float) plugin.getConfig().getDouble("LiquidMultiplier");
 				if(isLiquid && liquidDivider <= 0)
