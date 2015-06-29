@@ -38,9 +38,11 @@ public class BlockListener implements Listener {
 		for (int x = -radius; x <= radius; x++)
 			for (int y = -radius; y <= radius; y++)
 				for (int z = -radius; z <= radius; z++) {
-					Location targetLoc = new Location(detonatorLoc.getWorld(), detonatorLoc.getX() + x, detonatorLoc.getY() + y, detonatorLoc.getZ() + z);
-					if (detonatorLoc.distance(targetLoc) <= unalteredRadius)
-						explodeBlock(targetLoc, detonatorLoc, event.getEntityType());
+					if(!(event.getEntity() == null)) {
+						Location targetLoc = new Location(detonatorLoc.getWorld(), detonatorLoc.getX() + x, detonatorLoc.getY() + y, detonatorLoc.getZ() + z);
+						if (detonatorLoc.distance(targetLoc) <= unalteredRadius)
+							explodeBlock(targetLoc, detonatorLoc, event.getEntityType());
+					}
 				}
 	}
 
@@ -57,7 +59,7 @@ public class BlockListener implements Listener {
 	 * @param source {@code Location} of the explosion source
 	 * @param explosive The {@code EntityType} of the explosion cause
 	 */
-	private void explodeBlock(Location loc, Location source, EntityType explosive) {
+	void explodeBlock(Location loc, Location source, EntityType explosive) {
 		Block block = loc.getWorld().getBlockAt(loc);
 		if(plugin.getStorage().isValidBlock(block))
 			try {
@@ -78,7 +80,7 @@ public class BlockListener implements Listener {
 				float liquidDivider = (float) plugin.getConfig().getDouble("LiquidMultiplier");
 				if(isLiquid && liquidDivider <= 0)
 					return;
-				float rawDamage = (float) plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());
+				float rawDamage = explosive == null ? 1 : (float) plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());
 				if(plugin.getStorage().addDamage(block, isLiquid ? rawDamage / liquidDivider : rawDamage))
 					if(new Random().nextInt(100) + 1 >= plugin.getConfig().getInt("DropChance"))
 						block.setType(Material.AIR);

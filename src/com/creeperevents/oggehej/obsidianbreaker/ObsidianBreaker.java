@@ -18,7 +18,7 @@ import com.creeperevents.oggehej.obsidianbreaker.nms.NMS;
 
 public class ObsidianBreaker extends JavaPlugin
 {
-	private BlockListener blockListener;
+	BlockListener blockListener;
 	private PlayerListener playerListener;
 	private StorageHandler storage;
 	private NMS nmsHandler;
@@ -33,10 +33,12 @@ public class ObsidianBreaker extends JavaPlugin
 		// Initialise NMS class
 		setupNMS();
 
-		// Register events
+		// Register listeners
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(blockListener, this);
 		pm.registerEvents(playerListener, this);
+		if(pm.isPluginEnabled("Cannons"))
+			pm.registerEvents(new CannonsListener(this), this);
 
 		// Load configuration file
 		getConfig().options().copyDefaults(true);
