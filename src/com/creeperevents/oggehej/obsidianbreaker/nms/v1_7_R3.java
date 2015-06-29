@@ -13,7 +13,7 @@ public class v1_7_R3 implements NMS {
 		int x = block.getX(), y = block.getY(), z = block.getZ();
 		int dimension = ((CraftWorld) block.getWorld()).getHandle().dimension;
 		PacketPlayOutBlockBreakAnimation packet = new PacketPlayOutBlockBreakAnimation(block.getLocation().hashCode(), x, y, z, damage);
-		((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(x, y, z, 120, dimension, packet);
+		((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(x, y, z, 30, dimension, packet);
 	}
 
 	@Override
