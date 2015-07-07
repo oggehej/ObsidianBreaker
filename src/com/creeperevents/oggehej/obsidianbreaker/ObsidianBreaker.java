@@ -11,8 +11,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.mcstats.MetricsLite;
-
 import com.creeperevents.oggehej.obsidianbreaker.nms.NMS;
 
 public class ObsidianBreaker extends JavaPlugin
@@ -43,12 +41,6 @@ public class ObsidianBreaker extends JavaPlugin
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		setupLocale();
-
-		// Initialise metrics
-		try {
-			MetricsLite metrics = new MetricsLite(this);
-			metrics.start();
-		} catch (IOException e) {}
 
 		// Initialise command
 		getCommand("obsidianbreaker").setExecutor(new CommandHandler(this));
