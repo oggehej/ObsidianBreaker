@@ -1,8 +1,8 @@
 package com.creeperevents.oggehej.obsidianbreaker.nms;
 
-import org.bukkit.block.Block;
+import org.bukkit.Location;
 
 public interface NMS {
-	public void sendCrackEffect(Block block, int damage);
+	public void sendCrackEffect(Location location, int damage);
 	public boolean isDummy();
 }

@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -139,7 +138,7 @@ public class ObsidianBreaker extends JavaPlugin
 			getLogger().info("Couldn't find support for " + version +". Block cracks not activated.");
 			class Dummy implements NMS {
 				@Override
-				public void sendCrackEffect(Block block, int damage) {}
+				public void sendCrackEffect(Location location, int damage) {}
 				public boolean isDummy() {return true;}
 			}
 			this.nmsHandler = new Dummy();

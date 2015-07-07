@@ -123,7 +123,7 @@ public class StorageHandler {
 					return;
 
 				int durability = 10 - (int) Math.ceil(getRemainingDurability(block) / getTotalDurability(block) * 10);
-				plugin.getNMS().sendCrackEffect(block, durability);
+				plugin.getNMS().sendCrackEffect(block.getLocation(), durability);
 			} catch (UnknownBlockTypeException e) {
 				return;
 			}

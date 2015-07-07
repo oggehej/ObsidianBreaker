@@ -49,7 +49,9 @@ public class BlockListener implements Listener {
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
 	public void onBlockBreak(BlockBreakEvent event) {
 		StorageHandler storage = plugin.getStorage();
-		storage.damage.remove(storage.generateHash(event.getBlock().getLocation()));
+		Location loc = event.getBlock().getLocation();
+		storage.damage.remove(storage.generateHash(loc));
+		plugin.getNMS().sendCrackEffect(loc, -1);
 	}
 
 	/**
@@ -81,12 +83,13 @@ public class BlockListener implements Listener {
 				if(isLiquid && liquidDivider <= 0)
 					return;
 				float rawDamage = explosive == null ? 1 : (float) plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());
-				if(plugin.getStorage().addDamage(block, isLiquid ? rawDamage / liquidDivider : rawDamage))
+				if(plugin.getStorage().addDamage(block, isLiquid ? rawDamage / liquidDivider : rawDamage)) {
+					plugin.getNMS().sendCrackEffect(loc, -1);
 					if(new Random().nextInt(100) + 1 >= plugin.getConfig().getInt("DropChance"))
 						block.setType(Material.AIR);
 					else
 						block.breakNaturally();
-				else
+				} else
 					plugin.getStorage().renderCracks(block);
 			} catch (UnknownBlockTypeException e) {}
 	}
