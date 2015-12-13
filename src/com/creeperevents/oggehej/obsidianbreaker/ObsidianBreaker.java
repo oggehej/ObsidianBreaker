@@ -1,20 +1,24 @@
 package com.creeperevents.oggehej.obsidianbreaker;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.block.Block;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
 import com.creeperevents.oggehej.obsidianbreaker.nms.NMS;
 
-public class ObsidianBreaker extends JavaPlugin
-{
+/**
+ * The main class of ObsidianBreaker
+ * 
+ * @author oggehej
+ */
+public class ObsidianBreaker extends JavaPlugin {
 	BlockListener blockListener;
 	private PlayerListener playerListener;
 	private StorageHandler storage;
@@ -22,6 +26,9 @@ public class ObsidianBreaker extends JavaPlugin
 	private BukkitTask crackRunner;
 	BukkitTask regenRunner;
 
+	/**
+	 * To be run on enable
+	 */
 	public void onEnable() {
 		blockListener = new BlockListener(this);
 		playerListener = new PlayerListener(this);
@@ -40,7 +47,7 @@ public class ObsidianBreaker extends JavaPlugin
 		// Load configuration file
 		getConfig().options().copyDefaults(true);
 		saveConfig();
-		setupLocale();
+		Locale.setupLocale(this);
 
 		// Initialise command
 		getCommand("obsidianbreaker").setExecutor(new CommandHandler(this));
@@ -50,6 +57,9 @@ public class ObsidianBreaker extends JavaPlugin
 		scheduleCrackCheck();
 	}
 
+	/**
+	 * To be run on disable
+	 */
 	public void onDisable() {
 		storage = null;
 		blockListener = null;
@@ -63,45 +73,6 @@ public class ObsidianBreaker extends JavaPlugin
 	 */
 	public StorageHandler getStorage() {
 		return storage;
-	}
-
-	/**
-	 * Load/reload the lang.yml file.
-	 */
-	void setupLocale() {
-		File lang = new File(getDataFolder(), "lang.yml");
-
-		if (!lang.exists())
-			try {
-				lang.createNewFile();
-			} catch(IOException e) {
-				System.out.println("<-- Start -->");
-				Bukkit.getLogger().severe("[" + getName() + "] Couldn't create lang.yml!");
-				System.out.println("If you've decided to post this error message, "
-						+"please include everything between the start and end tag PLUS your config.yml AND lang.yml (if any)");
-				e.printStackTrace();
-				System.out.println("<-- End -->");
-				return;
-			}
-
-		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
-
-		for(Locale item : Locale.values())
-			if (conf.getString(item.name()) == null)
-				conf.set(item.name(), item.getDefault());
-
-		Locale.setFile(conf);
-
-		try {
-			conf.save(lang);
-		} catch(IOException e) {
-			System.out.println("<-- Start -->");
-			Bukkit.getLogger().severe("[" + getName() + "] Couldn't save lang.yml!");
-			System.out.println("If you've decided to post this error message, "
-					+"please include everything between the start and end tag PLUS your config.yml AND lang.yml (if any)");
-			e.printStackTrace();
-			System.out.println("<-- End -->");
-		}
 	}
 
 	/**
@@ -131,12 +102,16 @@ public class ObsidianBreaker extends JavaPlugin
 			class Dummy implements NMS {
 				@Override
 				public void sendCrackEffect(Location location, int damage) {}
+				@Override
 				public boolean isDummy() {return true;}
 			}
 			this.nmsHandler = new Dummy();
 		}
 	}
 
+	/**
+	 * Schedule the crack broadcaster
+	 */
 	void scheduleCrackCheck() {
 		if(crackRunner != null) {
 			crackRunner.cancel();
@@ -144,9 +119,12 @@ public class ObsidianBreaker extends JavaPlugin
 		}
 
 		if(getConfig().getBoolean("BlockCracks.Enabled"))
-			crackRunner = new CrackRunnable(this).runTaskTimerAsynchronously(this, 0, getConfig().getLong("BlockCracks.Interval") * 20);
+			crackRunner = new CrackRunnable().runTaskTimerAsynchronously(this, 0, getConfig().getLong("BlockCracks.Interval") * 20);
 	}
 
+	/**
+	 * Schedule the regen runner
+	 */
 	void scheduleRegenRunner() {
 		if(regenRunner != null) {
 			regenRunner.cancel();
@@ -156,45 +134,87 @@ public class ObsidianBreaker extends JavaPlugin
 		// Configuration can be set to a negative frequency in order to disable
 		long freq = getConfig().getLong("Regen.Frequency") * 20 * 60;
 		if(freq > 0) {
-			regenRunner = new BukkitRunnable() {
-				@Override
-				public void run() {
-					try {
-						for(Entry<String, BlockStatus> val : storage.damage.entrySet()) {
-							if(val.getValue().isModified())
-								val.getValue().setModified(false);
-							else {
-								val.getValue().setDamage(val.getValue().getDamage() - (float) getConfig().getDouble("Regen.Amount"));
-								if(val.getValue().getDamage() < 0.001f)
-									storage.damage.remove(val.getKey());							
-							}
-						}
-					} catch(Exception e) {
-						System.out.println("<-- Start -->");
-						System.out.println("[ObsidianBreaker] Error occured while trying to regen block (task "+getTaskId()+")");
-						System.out.println("If you've decided to post this error message, "
-								+"please include everything between the start and end tag PLUS your config.yml");
-						e.printStackTrace();
-						System.out.println("<-- End -->");
-					}
-				}
-			}.runTaskTimerAsynchronously(this, freq, freq);
+			regenRunner = new RegenRunnable().runTaskTimerAsynchronously(this, freq, freq);
 		}
 	}
 
-	static class CrackRunnable extends BukkitRunnable {
-		ObsidianBreaker plugin;
-		CrackRunnable(ObsidianBreaker plugin) {
-			this.plugin = plugin;
-		}
+	/**
+	 * Print a formatted error message
+	 * 
+	 * @param message Error message
+	 * @param e The {@code Exception} object or null if none
+	 */
+	public void printError(String message, Exception e) {
+		String s = "<-- Start -->\n"
+				+ "[" + getName() + " v" + getDescription().getVersion() + "] " + message + "\n"
+				+ "If you've decided to post this error message, "
+				+ "please include everything between the \"Start\" and \"End\" tag PLUS your config.yml and lang.yml\n"
+				+ "<-- Stack trace -->\n";
+		if(e != null)
+			s += ExceptionUtils.getStackTrace(e) + "\n";
+		else
+			s += "None provided\n";
+		s += "<-- End -->";
+		Bukkit.getLogger().severe(s);
+	}
 
+	@SuppressWarnings("deprecation")
+	public static boolean isMatch(Block block, String string) {
+		try {
+			String[] s = string.split(":");
+			if(block.getTypeId() == Integer.parseInt(s[0]) && (s.length == 1 || block.getData() == Byte.parseByte(s[1])))
+				return true;
+		} catch(Exception e) {}
+
+		return false;
+	}
+
+	/**
+	 * Will broadcast cracks to all players
+	 * 
+	 * @author oggehej
+	 */
+	class CrackRunnable extends BukkitRunnable {
 		@Override
 		public void run() {
-			for(String hash : plugin.getStorage().damage.keySet()) {
-				try {
-					Location loc = plugin.getStorage().generateLocation(hash);
-					plugin.getStorage().renderCracks(loc.getBlock());
-				} catch(Exception e) {}
+			try {
+				for(ConcurrentHashMap<String, BlockStatus> map : getStorage().damage.values()) {
+					for(BlockStatus status : map.values()) {
+						try {
+							Location loc = getStorage().generateLocation(status.getBlockHash());
+							if(loc.getChunk().isLoaded())
+								getStorage().renderCracks(loc.getBlock());
+						} catch(Exception e) {}
+					}
+				}
+			} catch(Exception e) {
+				printError("Error occured when broadcasting block cracks. TaskID: " + this.getTaskId(), e);
+			}
+		}
+	}
+
+	/**
+	 * Will regenerate blocks when run
+	 * 
+	 * @author oggehej
+	 */
+	class RegenRunnable extends BukkitRunnable {
+		@Override
+		public void run() {
+			try {
+				for(ConcurrentHashMap<String, BlockStatus> map : storage.damage.values()) {
+					for(BlockStatus status : map.values()) {
+						if(status.isModified())
+							status.setModified(false);
+						else {
+							status.setDamage(status.getDamage() - (float) getConfig().getDouble("Regen.Amount"));
+							if(status.getDamage() < 0.001f)
+								getStorage().removeBlockStatus(status);							
+						}
+					}
+				}
+			} catch(Exception e) {
+				printError("Error occured while trying to regen block (task "+getTaskId()+")", e);
 			}
 		}
 	}

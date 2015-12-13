@@ -1,8 +1,16 @@
 package com.creeperevents.oggehej.obsidianbreaker;
 
+/**
+ * Stores damage data concerning one block
+ * 
+ * @author oggehej
+ */
 class BlockStatus {
-	private float damage;
+	private float damage = 0;
+	private float maxDamage;
 	private boolean modified = true;
+	private final String blockHash;
+	private final String chunkHash;
 
 	/**
 	 * An object that contains information about the
@@ -10,8 +18,10 @@ class BlockStatus {
 	 * 
 	 * @param damage Current damage
 	 */
-	BlockStatus(float damage) {
-		this.damage = damage;
+	BlockStatus(String blockHash, String chunkHash, float maxDamage) {
+		this.blockHash = blockHash;
+		this.chunkHash = chunkHash;
+		this.maxDamage = maxDamage;
 	}
 
 	/**
@@ -48,5 +58,32 @@ class BlockStatus {
 	 */
 	void setModified(boolean modified) {
 		this.modified = modified;
+	}
+
+	/**
+	 * Get the maximum amount of damage the block can take
+	 * 
+	 * @return Max damage
+	 */
+	float getTotalDurability() {
+		return this.maxDamage;
+	}
+
+	/**
+	 * Get the block hash associated with this object
+	 * 
+	 * @return Block hash
+	 */
+	String getBlockHash() {
+		return blockHash;
+	}
+
+	/**
+	 * Get the chunk hash associated with this object
+	 * 
+	 * @return Chunk hash
+	 */
+	String getChunkHash() {
+		return chunkHash;
 	}
 }

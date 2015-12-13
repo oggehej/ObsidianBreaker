@@ -5,6 +5,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+/**
+ * Handles the commands
+ * 
+ * @author oggehej
+ */
 public class CommandHandler implements CommandExecutor {
 	private ObsidianBreaker plugin;
 	CommandHandler(ObsidianBreaker instance) {
@@ -20,7 +25,7 @@ public class CommandHandler implements CommandExecutor {
 		} else if(args[0].equalsIgnoreCase("reload"))
 			if(sender.hasPermission("obsidianbreaker.reload")) {
 				plugin.reloadConfig();
-				plugin.setupLocale();
+				Locale.setupLocale(plugin);
 				plugin.scheduleCrackCheck();
 				plugin.scheduleRegenRunner();
 				sender.sendMessage(Locale.CONFIG_RELOADED.toString());
