@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.creeperevents.oggehej.obsidianbreaker.nms.NMS;
+import com.creeperevents.oggehej.obsidianbreaker.nms.Reflection;
 
 /**
  * The main class of ObsidianBreaker
@@ -98,14 +99,10 @@ public class ObsidianBreaker extends JavaPlugin {
 				this.nmsHandler = (NMS) clazz.getConstructor().newInstance();
 			}
 		} catch (final Exception e) {
-			getLogger().info("Couldn't find support for " + version +". Block cracks not activated.");
-			class Dummy implements NMS {
-				@Override
-				public void sendCrackEffect(Location location, int damage) {}
-				@Override
-				public boolean isDummy() {return true;}
-			}
-			this.nmsHandler = new Dummy();
+			getLogger().info("Could not find NMS version " + version + ". Falling back to reflections. Are you sure you're using the latest version?\n"
+					+ "If you are using the latest verion and an error appears later on or block cracks don't work, contact the plugin author. "
+					+ "Otherwise everything should function normally.");
+			this.nmsHandler = new Reflection();
 		}
 	}
 

@@ -16,9 +16,4 @@ public class v1_8_R3 implements NMS {
 		PacketPlayOutBlockBreakAnimation packet = new PacketPlayOutBlockBreakAnimation(location.hashCode(), new BlockPosition(x, y, z), damage);
 		((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(x, y, z, 30, dimension, packet);
 	}
-
-	@Override
-	public boolean isDummy() {
-		return false;
-	}
 }
