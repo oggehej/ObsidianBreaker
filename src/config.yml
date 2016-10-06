@@ -9,6 +9,8 @@ LiquidMultiplier: 2
 DurabilityChecker: '280'
 VoidProtector: true
 BedrockBlocking: true
+DisabledWorlds:
+- 'Insert world name here'
 Drops:
   DropChance: 0
   DontDrop:

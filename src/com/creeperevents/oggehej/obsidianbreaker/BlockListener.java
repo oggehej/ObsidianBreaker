@@ -31,6 +31,11 @@ public class BlockListener implements Listener {
 		if(event.getEntity() == null)
 			return;
 
+		List<String> worlds = plugin.getConfig().getStringList("DisabledWorlds");
+		for(String world : worlds)
+			if(world.equalsIgnoreCase(event.getLocation().getWorld().getName()))
+				return;
+
 		Iterator<Block> it = event.blockList().iterator();
 		while(it.hasNext()) {
 			Block block = it.next();
