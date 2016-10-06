@@ -13,8 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.util.BlockIterator;
-import org.bukkit.util.Vector;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Block listener class
@@ -71,64 +70,108 @@ public class BlockListener implements Listener {
 	 * @param source {@code Location} of the explosion source
 	 * @param explosive The {@code EntityType} of the explosion cause
 	 */
-	@SuppressWarnings("deprecation")
 	void explodeBlock(Location loc, Location source, EntityType explosive) {
 		if(!loc.getChunk().isLoaded() || (loc.getBlockY() == 0 && plugin.getConfig().getBoolean("VoidProtector")))
 			return;
 
 		Block block = loc.getWorld().getBlockAt(loc);
 		if(plugin.getStorage().isValidBlock(block)) {
-			try {
-				boolean isLiquid = false;
-				float liquidDivider = (float) plugin.getConfig().getDouble("LiquidMultiplier");
+			float liquidDivider = (float) plugin.getConfig().getDouble("LiquidMultiplier");
 
-				// Set multiplier to 1 to bypass
-				if(liquidDivider != 1) {
-					try {
-						Vector v = new Vector(loc.getBlockX() - source.getBlockX(), loc.getBlockY() - source.getBlockY(), loc.getBlockZ() - source.getBlockZ());
-						BlockIterator it = new BlockIterator(source.getWorld(), source.toVector(), v, 0, (int) source.distance(loc));
-						while(it.hasNext()) {
-							Block b = it.next();
-							if(b.isLiquid()) {
-								isLiquid = true;
-								break;
-							}
-						}
-					} catch(Exception e) {
-						if(source.getBlock().isLiquid())
-							isLiquid = true;
+			// No need to loop through everything if we don't have to
+			if(liquidDivider != 1 || plugin.getConfig().getBoolean("BedrockBlocking")) {
+				new BlockIteratorRunner(block, source, explosive).runTask(plugin);
+			} else
+				removeBlock(block, false, explosive);
+		}
+	}
 
-						plugin.printError("Liquid detection system failed. Fell back to primitive detection.", e);
+	/**
+	 * @param block Block
+	 * @param isLiquid If the path from the detonation and block has liquids
+	 * @param explosive Explosive type
+	 */
+	@SuppressWarnings("deprecation")
+	private void removeBlock(Block block, boolean isLiquid, EntityType explosive) {
+		try {
+			float liquidDivider = (float) plugin.getConfig().getDouble("LiquidMultiplier");
+
+			if(isLiquid && liquidDivider <= 0)
+				return;
+
+			float rawDamage = explosive == null ? 1 : (float) plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());
+			if(plugin.getStorage().addDamage(block, isLiquid ? rawDamage / liquidDivider : rawDamage)) {
+				plugin.getNMS().sendCrackEffect(block.getLocation(), -1);
+
+				@SuppressWarnings("unchecked")
+				List<String> list = (List<String>) plugin.getConfig().getList("Drops.DontDrop");
+				for(Object section : list) {
+					if(section instanceof Integer)
+						section = Integer.toString((Integer) section);
+
+					String[] s = ((String) section).split(":");
+					if(block.getTypeId() == Integer.parseInt(s[0]) && (s.length == 1 || block.getData() == Byte.parseByte(s[1]))) {
+						block.setType(Material.AIR);
+						return;
 					}
 				}
 
-				if(isLiquid && liquidDivider <= 0)
-					return;
+				if(new Random().nextInt(100) + 1 >= plugin.getConfig().getInt("Drops.DropChance"))
+					block.setType(Material.AIR);
+				else
+					block.breakNaturally();
+			} else
+				plugin.getStorage().renderCracks(block);
+		} catch(UnknownBlockTypeException e) {}
+	}
 
-				float rawDamage = explosive == null ? 1 : (float) plugin.getConfig().getDouble("ExplosionSources." + explosive.toString());
-				if(plugin.getStorage().addDamage(block, isLiquid ? rawDamage / liquidDivider : rawDamage)) {
-					plugin.getNMS().sendCrackEffect(loc, -1);
+	/**
+	 * Class that will be called asynchronously
+	 * because it contains the BlockIterator stuff
+	 */
+	private class BlockIteratorRunner extends BukkitRunnable {
+		private Block block;
+		private Location source;
+		private EntityType explosive;
+		private boolean isLiquid = false;
 
-					@SuppressWarnings("unchecked")
-					List<String> list = (List<String>) plugin.getConfig().getList("Drops.DontDrop");
-					for(Object section : list) {
-						if(section instanceof Integer)
-							section = Integer.toString((Integer) section);
+		private BlockIteratorRunner(Block block, Location source, EntityType explosive) {
+			this.block = block;
+			this.source = source;
+			this.explosive = explosive;
+		}
 
-						String[] s = ((String) section).split(":");
-						if(block.getTypeId() == Integer.parseInt(s[0]) && (s.length == 1 || block.getData() == Byte.parseByte(s[1]))) {
-							block.setType(Material.AIR);
-							return;
-						}
+		@Override
+		public void run() {
+			Location loc = block.getLocation();
+
+			try {
+				// BlockIterator it = new BlockIterator(source.getWorld(), source.toVector(), loc.subtract(source).toVector().normalize(), 0, (int) source.distance(loc));
+				Iterator<Block> it = BlockIntersector.getIntersectingBlocks(source, loc).iterator();
+
+				System.out.println("v1");
+				while(it.hasNext()) {
+					Block b = it.next();
+					if(b.isLiquid()) {
+						isLiquid = true;
+						break;
+					} else if(b.getType() == Material.BEDROCK && plugin.getConfig().getBoolean("BedrockBlocking") && it.hasNext()) {
+						return;
 					}
+				}
+			} catch(Exception e) {
+				if(source.getBlock().isLiquid())
+					isLiquid = true;
 
-					if(new Random().nextInt(100) + 1 >= plugin.getConfig().getInt("Drops.DropChance"))
-						block.setType(Material.AIR);
-					else
-						block.breakNaturally();
-				} else
-					plugin.getStorage().renderCracks(block);
-			} catch (UnknownBlockTypeException e) {}
+				plugin.printError("Liquid detection system failed. Fell back to primitive detection.", e);
+			}
+
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					removeBlock(block, isLiquid, explosive);
+				}
+			}.runTask(plugin);
 		}
 	}
 }

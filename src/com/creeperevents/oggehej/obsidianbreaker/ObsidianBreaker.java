@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.creeperevents.oggehej.obsidianbreaker.nms.NMS;
 import com.creeperevents.oggehej.obsidianbreaker.nms.Reflection;
+import com.creeperevents.oggehej.obsidianbreaker.nms.ReflectionUtilsLight;
 
 /**
  * The main class of ObsidianBreaker
@@ -65,6 +66,7 @@ public class ObsidianBreaker extends JavaPlugin {
 		storage = null;
 		blockListener = null;
 		playerListener = null;
+		ReflectionUtilsLight.clearCache();
 	}
 
 	/**
