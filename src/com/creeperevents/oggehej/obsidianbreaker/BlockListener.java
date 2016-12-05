@@ -154,7 +154,6 @@ public class BlockListener implements Listener {
 				// BlockIterator it = new BlockIterator(source.getWorld(), source.toVector(), loc.subtract(source).toVector().normalize(), 0, (int) source.distance(loc));
 				Iterator<Block> it = BlockIntersector.getIntersectingBlocks(source, loc).iterator();
 
-				System.out.println("v1");
 				while(it.hasNext()) {
 					Block b = it.next();
 					if(b.isLiquid()) {
