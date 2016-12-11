@@ -1,6 +1,6 @@
 name: ObsidianBreaker
 main: com.creeperevents.oggehej.obsidianbreaker.ObsidianBreaker
-version: 2.3
+version: 2.3.1
 description: Destroy obsidian like a baws
 author: oggehej
 softdepend: [Cannons]
